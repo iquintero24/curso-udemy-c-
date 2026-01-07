@@ -1,0 +1,20 @@
+# Servicio de sql con la version de 2022 
+services:
+  sql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver2022 # nombre del contenedor
+    ports: # mapping del puerto 
+      - "1433:1433"
+    environment:
+      ACCEPT_EULA: "1" # aceptando los terminos y condiciones de uso de sqlserver
+      MSSQL_SA_PASSWORD: "MyStrongPass123" # password para el uso de sql server
+      MSSQL_PID: "Developer" # edicion developere de sql
+    volumes: # aca indicamos que vamos a a guardar la base de datos
+      - sqlserverdata:/var/opt/mssql
+volumes:
+  sqlserverdata:
+# Comandos útiles:
+# Levantar los contenedores en segundo plano:
+#   docker-compose up -d
+# Apagar y eliminar contenedores (no borra los volúmenes):
+#   docker-compose down
