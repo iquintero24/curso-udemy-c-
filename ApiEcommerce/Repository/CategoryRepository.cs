@@ -19,10 +19,10 @@ public class CategoryRepository: ICategoryRepository
         return _dbContext.Categories.OrderBy(c => c.Name).ToList();
     }
 
-    public Category GetCategoryById(int id)
+    public Category? GetCategoryById(int id)
     {
-        return _dbContext.Categories.FirstOrDefault(c => c.Id == id) ?? throw new InvalidOperationException($"La categoria con el {id}  no existe");
-        
+        return _dbContext.Categories.FirstOrDefault(c => c.Id == id);
+
     }
 
     public bool CategoryExists(int id)

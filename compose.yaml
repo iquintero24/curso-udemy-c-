@@ -1,0 +1,7 @@
+﻿services:
+  apiecommerce:
+    image: apiecommerce
+    build:
+      context: .
+      dockerfile: ApiEcommerce/Dockerfile
+
