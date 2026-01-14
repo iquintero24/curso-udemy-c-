@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ApiEcommerce.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260113205732_CreateTableProduct")]
+    [Migration("20260114142245_CreateTableProduct")]
     partial class CreateTableProduct
     {
         /// <inheritdoc />
@@ -63,9 +63,6 @@ namespace ApiEcommerce.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("Id")
-                        .HasColumnType("int");
-
                     b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -89,7 +86,7 @@ namespace ApiEcommerce.Migrations
 
                     b.HasKey("ProductId");
 
-                    b.HasIndex("Id");
+                    b.HasIndex("CategoryId");
 
                     b.ToTable("Products");
                 });
@@ -98,7 +95,9 @@ namespace ApiEcommerce.Migrations
                 {
                     b.HasOne("ApiEcommerce.Models.Category", "Category")
                         .WithMany()
-                        .HasForeignKey("Id");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Category");
                 });
