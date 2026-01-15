@@ -80,9 +80,66 @@ public class ProductsController : ControllerBase
             ModelState.AddModelError("CustomError", $"Algo salio mal al guardar el registro {product.Name}");
             return StatusCode(500, ModelState);
         }
-        
-        return CreatedAtRoute("GetProduct", new { productId = product.ProductId  }, product); 
+        var createdProduct = _productRepository.GetById(product.ProductId);
+        var productDto = _mapper.Map<ProductDto>(createdProduct);
+        return CreatedAtRoute("GetProduct", new { productId = product.ProductId  }, productDto); 
         
     }
+    
+    [HttpGet("searchProductByCategory/{categoryId:int}", Name = "GetProductsByCategory")]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public IActionResult GetProductForCategory(int categoryId)
+    {
+        var products = _productRepository.GetProductsByCategoryId(categoryId);
+        if (products.Count == 0)
+        {
+            return NotFound($"Los productos con la categoryId {categoryId} no existe");
+        }
+        
+        var productsDto = _mapper.Map<List<ProductDto>>(products);
+        return Ok(productsDto);
+    }
 
+    [HttpGet("searchProductByNameDescription/{seachTerm}", Name = "GetProductsByNameDescription")]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public IActionResult GetProductsByNameDescription(string seachTerm)
+    {
+        var products = _productRepository.SearchṔroducts(seachTerm);
+        if (products.Count == 0)
+        {
+            return NotFound($"No se encontaron productos con ese nombre o descripcion: {seachTerm}");
+        }
+        
+        var productDto = _mapper.Map<List<ProductDto>>(products);
+        return Ok(productDto);
+    }
+    
+    [HttpGet("buyProduct/{productName}/{quantity:int}", Name = "BuyProduct")]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public IActionResult BuyProduct(string productName,  int quantity)
+    {
+        if (string.IsNullOrWhiteSpace(productName) || quantity <= 0)
+        {
+            return BadRequest($"El nombre o la cantidad no es valida");
+        }
+        
+        var foundProduct = _productRepository.ProductExits(productName);
+
+        if (!foundProduct)
+        {
+            return NotFound($"El producto {foundProduct} no existe");
+        }
+        
+       return Ok(_mapper.Map<Product>(foundProduct));
+        
+    }
 }

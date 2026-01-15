@@ -6,7 +6,7 @@ public interface IProductRepository
 {
     ICollection<Product> GetAll();
     ICollection<Product> GetProductsByCategoryId(int categoryId);
-    ICollection<Product> SearchṔroduct(string name);
+    ICollection<Product> SearchṔroducts(string searchTerm);
     Product? GetById(int id);
     bool BuyProduct(string productName, int quantity);
     bool ProductExists(int id);

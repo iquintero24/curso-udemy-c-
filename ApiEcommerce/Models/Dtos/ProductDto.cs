@@ -22,4 +22,6 @@ public class ProductDto
     public DateTime? UpdatedAt { get; set; } = null;
     
     public int CategoryId { get; set; }
+    
+    public string CategoryName { get; set; } = string.Empty;
 }
