@@ -10,7 +10,7 @@ services:
       MSSQL_SA_PASSWORD: "MyStrongPass123" # password para el uso de sql server
       MSSQL_PID: "Developer" # edicion developere de sql
     volumes: # aca indicamos que vamos a a guardar la base de datos
-      - sqlserverdata:/var/opt/mssql
+      - sqlserverdata:/var/opt/mssql      
 volumes:
   sqlserverdata:
 # Comandos útiles:
