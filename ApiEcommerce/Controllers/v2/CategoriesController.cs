@@ -1,13 +1,17 @@
 using ApiEcommerce.Models;
 using ApiEcommerce.Models.Dtos;
 using ApiEcommerce.Repository.IRepository;
+using Asp.Versioning;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ApiEcommerce.Controllers;
+namespace ApiEcommerce.Controllers.v2;
 
-[Route("api/[controller]")] // http:localhost:1445/categories
+[Route("api/v{version:apiVersion}/[controller]")] // http:localhost:1445/categories
+[ApiVersion("2.0")]
 [ApiController]
+[Authorize(Roles = "Admin")]
 public class CategoriesController : ControllerBase
 {
     private readonly ICategoryRepository _categoryRepository; // injection de category repository
@@ -24,12 +28,13 @@ public class CategoriesController : ControllerBase
     /// endpoint get para obtener todas las categorias
     /// </summary>
     /// <returns></returns>
+    [AllowAnonymous]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult GetCategories()
     {
-        var categories = _categoryRepository.GetCategories();
+        var categories = _categoryRepository.GetCategories().OrderByDescending(c => c.Id).ToList();
         var categoriesDto = new List<CategoryDto>();
         foreach (var category in categories)
         {
@@ -49,9 +54,14 @@ public class CategoriesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    //[ResponseCache(Duration = 10)]
+    [ResponseCache(CacheProfileName = "Default10")]
+    [AllowAnonymous]
     public IActionResult GetCategory(int id)
     {
+        System.Console.WriteLine($"Categoria con el id {id} a las {DateTime.Now}");
         var category = _categoryRepository.GetCategoryById(id);
+        System.Console.WriteLine($"Respuesta con el id {id}");
         if (category == null)
         {
             return NotFound($"La categoria con el id {id} no existe");

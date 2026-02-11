@@ -1,14 +1,18 @@
 using ApiEcommerce.Models;
 using ApiEcommerce.Models.Dtos;
 using ApiEcommerce.Repository.IRepository;
+using Asp.Versioning;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiEcommerce.Controllers;
 
-[Route("api/[controller]")] // http:localhost:1445/products
+[Route("api/v{version:apiVersion}/[controller]")] 
 [ApiController]
+[ApiVersionNeutral]
+[Authorize(Roles = "Admin")]
 public class ProductsController : ControllerBase
 {
     private readonly IProductRepository _productRepository; // injection de category repository
@@ -22,10 +26,12 @@ public class ProductsController : ControllerBase
         _categoryRepository = categoryRepository;
         _mapper = mapper;
     }
-
+    
+    
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [AllowAnonymous]
     public IActionResult GetProduct()
     {
         var products = _productRepository.GetAll();
@@ -38,6 +44,7 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [AllowAnonymous]
     public IActionResult GetProduct(int productId)
     {
         var product = _productRepository.GetById(productId);
